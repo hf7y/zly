@@ -22,9 +22,11 @@
 % https://codereview.appspot.com/10965043/diff/8001/input/regression/scheme-text-spanner.ly
 % to make necessary changes.
 
-#(define-event-class 'frame-event 'span-event)
+#(unless (ly:make-event-class 'frame-event)   ; idempotent guard (was fatal on re-include)
+   (define-event-class 'frame-event 'span-event))
 
-#(define-event-class 'frame-extender-event 'span-event)
+#(unless (ly:make-event-class 'frame-extender-event)
+   (define-event-class 'frame-extender-event 'span-event))
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MUSIC DESCRIPTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -91,11 +93,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%% CREATE NEW GROB PROPERTIES %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #(define (define-grob-property symbol type? description)
-  (if (not (equal? (object-property symbol 'backend-doc) #f))
-      (ly:error (_ "symbol ~S redefined") symbol))
-
-  (set-object-property! symbol 'backend-type? type?)
-  (set-object-property! symbol 'backend-doc description)
+  ;; idempotent: set only if not already defined.  (Was: ly:error on redefine,
+  ;; which -- like the event classes above -- made re-including this file in a
+  ;; single lilypond session fatal.)
+  (if (equal? (object-property symbol 'backend-doc) #f)
+      (begin
+        (set-object-property! symbol 'backend-type? type?)
+        (set-object-property! symbol 'backend-doc description)))
   symbol)
 
 #(map

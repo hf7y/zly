@@ -1,10 +1,10 @@
-%%% lib/core/includes.ily
-%%% Aggregates the generic (non-ABC-specific) notation library.
+%%% includes.ily
+%%% Aggregates the generic notation library. Include THIS file, not the
+%%% individual ones.
 %%%
-%%% This is the exact unit meant to be promoted to a standalone repo
-%%% later (working name: zly) via `git subtree split -P lib/core`. It
-%%% has zero dependencies on anything in lib/project/ — do not add any
-%%% here.
+%%% Zero dependencies on any consuming project — do not add any here. A
+%%% consumer mounts this repo at its own lib/core and loads it from
+%%% lib/includes.ily alongside its house style.
 %%%
 %%% LOAD ORDER:
 %%%   noteheads before strings — strings.ily uses square-head-stencil.
